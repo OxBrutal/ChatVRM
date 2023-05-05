@@ -16,7 +16,7 @@ export const Introduction = ({ openAiKey, onChangeAiKey }: Props) => {
   );
 
   return opened ? (
-    <div className="absolute z-40 w-full h-full px-24 py-40  bg-black/30 font-M_PLUS_2">
+    <div className="absolute z-40 w-full h-full px-24 py-40 bg-black/30 font-M_PLUS_2">
       <div className="mx-auto my-auto max-w-3xl max-h-full p-24 overflow-auto bg-white rounded-16">
         <div className="my-24">
           <div className="my-8 font-bold typography-20 text-secondary ">
@@ -38,17 +38,17 @@ export const Introduction = ({ openAiKey, onChangeAiKey }: Props) => {
             <Link
               url={"https://github.com/pixiv/three-vrm"}
               label={"@pixiv/three-vrm"}
-            />
+            />{" "}
             for displaying and manipulating 3D models,{" "}
             <Link
               url={
                 "https://openai.com/blog/introducing-chatgpt-and-whisper-apis"
               }
               label={"ChatGPT API"}
-            />
+            />{" "}
             for speech generation, and{" "}
-            <Link url={"http://koeiromap.rinna.jp/"} label={"Koeiro API"} />
-            for speech synthesis. See this{" "}
+            <Link url={"http://koeiromap.rinna.jp/"} label={"Koeiro API"} /> for
+            speech synthesis. See this{" "}
             <Link
               url={"https://inside.pixiv.blog/2023/04/28/160000"}
               label={"technical article for details"}
@@ -95,12 +95,13 @@ export const Introduction = ({ openAiKey, onChangeAiKey }: Props) => {
               url="https://platform.openai.com/account/api-keys"
               label="the OpenAI site"
             />
-            Enter the obtained API key in the form.
+            . Enter the obtained API key in the form.
           </div>
           <div className="my-16">
             The entered API key will be used directly from the browser to use
             the OpenAI API, so it will not be saved on the server, etc. The
             model used is GPT-3.
+            <br />
             <br />
             *Your API key and conversation text will not be sent to pixiv&apos;s
             server.
