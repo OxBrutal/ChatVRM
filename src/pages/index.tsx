@@ -51,7 +51,7 @@ export default function Home() {
   );
 
   /**
-   * 文ごとに音声を直列でリクエストしながら再生する
+   * Requesting and playing back audio in sequence for each text segment.
    */
   const handleSpeakAi = useCallback(
     async (
@@ -65,12 +65,12 @@ export default function Home() {
   );
 
   /**
-   * アシスタントとの会話を行う
+   * Engaging in conversation with the assistant.
    */
   const handleSendChat = useCallback(
     async (text: string) => {
       if (!openAiKey) {
-        setAssistantMessage("APIキーが入力されていません");
+        setAssistantMessage("API key is not entered");
         return;
       }
 
@@ -79,7 +79,7 @@ export default function Home() {
       if (newMessage == null) return;
 
       setChatProcessing(true);
-      // ユーザーの発言を追加して表示
+      // Displaying additional user input.
       const messageLog: Message[] = [
         ...chatLog,
         { role: "user", content: newMessage },
@@ -118,14 +118,14 @@ export default function Home() {
 
           receivedMessage += value;
 
-          // 返答内容のタグ部分の検出
+          // Detecting the tag portion of the response content.
           const tagMatch = receivedMessage.match(/^\[(.*?)\]/);
           if (tagMatch && tagMatch[0]) {
             tag = tagMatch[0];
             receivedMessage = receivedMessage.slice(tag.length);
           }
 
-          // 返答を一文単位で切り出して処理する
+          // Divide the response into individual sentences for processing.
           const sentenceMatch = receivedMessage.match(
             /^(.+[。．！？\n]|.{10,}[、,])/
           );
@@ -136,7 +136,7 @@ export default function Home() {
               .slice(sentence.length)
               .trimStart();
 
-            // 発話不要/不可能な文字列だった場合はスキップ
+            // If the string is speechless/impossible, skip it.
             if (
               !sentence.replace(
                 /^[\s\[\(\{「［（【『〈《〔｛«‹〘〚〛〙›»〕》〉』】）］」\}\)\]]+$/g,
@@ -150,7 +150,7 @@ export default function Home() {
             const aiTalks = textsToScreenplay([aiText], koeiroParam);
             aiTextLog += aiText;
 
-            // 文ごとに音声を生成 & 再生、返答を表示
+            // Generate and play audio per sentence, display response.
             const currentAssistantMessage = sentences.join(" ");
             handleSpeakAi(aiTalks[0], () => {
               setAssistantMessage(currentAssistantMessage);
@@ -164,7 +164,7 @@ export default function Home() {
         reader.releaseLock();
       }
 
-      // アシスタントの返答をログに追加
+      // Add assistant's response to the log.
       const messageLogAssistant: Message[] = [
         ...messageLog,
         { role: "assistant", content: aiTextLog },

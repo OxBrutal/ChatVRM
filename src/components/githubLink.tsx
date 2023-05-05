@@ -10,6 +10,7 @@ export const GitHubLink = () => {
         target="_blank"
       >
         <div className="p-8 rounded-16 bg-[#1F2328] hover:bg-[#33383E] active:bg-[565A60] flex">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="https://github.com/pixiv/ChatVRM"
             height={24}

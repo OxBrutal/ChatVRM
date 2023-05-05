@@ -46,9 +46,9 @@ export const Settings = ({
       </div>
       <div className="max-h-full overflow-auto">
         <div className="text-text1 max-w-3xl mx-auto px-24 py-64 ">
-          <div className="my-24 typography-32 font-bold">設定</div>
+          <div className="my-24 typography-32 font-bold">Settings</div>
           <div className="my-24">
-            <div className="my-16 typography-20 font-bold">OpenAI API キー</div>
+            <div className="my-16 typography-20 font-bold">OpenAI API Key</div>
             <input
               className="text-ellipsis px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
               type="text"
@@ -57,31 +57,33 @@ export const Settings = ({
               onChange={onChangeAiKey}
             />
             <div>
-              APIキーは
+              API keys can be obtained from{" "}
               <Link
                 url="https://platform.openai.com/account/api-keys"
-                label="OpenAIのサイト"
-              />
-              で取得できます。取得したAPIキーをフォームに入力してください。
+                label="the OpenAI site"
+              />{" "}
+              Enter the obtained API key in the form.
             </div>
             <div className="my-16">
-              入力されたAPIキーで、ブラウザから直接OpenAIのAPIを利用しますので、サーバー等には保存されません。
-              なお、利用しているモデルはGPT-3です。
+              The entered API key will be used directly from the browser to use
+              the OpenAI API, so it will not be saved on the server, etc. The
+              model used is GPT-3.
               <br />
-              ※APIキーや会話文はピクシブのサーバーに送信されません。
+              *Your API key and conversation text will not be sent to
+              pixiv&apos;s server.
             </div>
           </div>
           <div className="my-40">
-            <div className="my-16 typography-20 font-bold">
-              キャラクターモデル
-            </div>
+            <div className="my-16 typography-20 font-bold">Character model</div>
             <div className="my-8">
-              <TextButton onClick={onClickOpenVrmFile}>VRMを開く</TextButton>
+              <TextButton onClick={onClickOpenVrmFile}>
+                Open the VRM file.
+              </TextButton>
             </div>
           </div>
           <div className="my-40">
             <div className="my-16 typography-20 font-bold">
-              キャラクター設定（システムプロンプト）
+              Character configuration (system prompt)
             </div>
 
             <textarea
@@ -91,9 +93,11 @@ export const Settings = ({
             ></textarea>
           </div>
           <div className="my-40">
-            <div className="my-16 typography-20 font-bold">声の調整</div>
+            <div className="my-16 typography-20 font-bold">
+              Voice adjustment.
+            </div>
             <div>
-              Koeiro APIを使用しています。詳しくは
+              I am using Koeiro API. Please see{" "}
               <a
                 className="text-primary hover:text-primary-hover"
                 target="_blank"
@@ -101,38 +105,38 @@ export const Settings = ({
                 href="http://koeiromap.rinna.jp"
               >
                 http://koeiromap.rinna.jp
-              </a>
-              をご覧ください。
+              </a>{" "}
+              for details.
             </div>
-            <div className="mt-16">プリセット</div>
+            <div className="mt-16">Presets</div>
             <div className="my-8 grid grid-cols-2 gap-[8px]">
               <TextButton
                 onClick={() =>
                   onChangeKoeiroParam(PRESET_A.speakerX, PRESET_A.speakerY)
                 }
               >
-                かわいい
+                Cute
               </TextButton>
               <TextButton
                 onClick={() =>
                   onChangeKoeiroParam(PRESET_B.speakerX, PRESET_B.speakerY)
                 }
               >
-                元気
+                Lively
               </TextButton>
               <TextButton
                 onClick={() =>
                   onChangeKoeiroParam(PRESET_C.speakerX, PRESET_C.speakerY)
                 }
               >
-                かっこいい
+                Cool
               </TextButton>
               <TextButton
                 onClick={() =>
                   onChangeKoeiroParam(PRESET_D.speakerX, PRESET_D.speakerY)
                 }
               >
-                渋い
+                Lame
               </TextButton>
             </div>
             <div className="my-24">
