@@ -9,23 +9,27 @@ import { AssistantText } from "./assistantText";
 
 type Props = {
   openAiKey: string;
+  openAiEndpoint: string;
   systemPrompt: string;
   chatLog: Message[];
   koeiroParam: KoeiroParam;
   assistantMessage: string;
   onChangeSystemPrompt: (systemPrompt: string) => void;
   onChangeAiKey: (key: string) => void;
+  onChangeAiEndpoint: (endpoint: string) => void;
   onChangeChatLog: (index: number, text: string) => void;
   onChangeKoeiromapParam: (param: KoeiroParam) => void;
 };
 export const Menu = ({
   openAiKey,
+  openAiEndpoint,
   systemPrompt,
   chatLog,
   koeiroParam,
   assistantMessage,
   onChangeSystemPrompt,
   onChangeAiKey,
+  onChangeAiEndpoint,
   onChangeChatLog,
   onChangeKoeiromapParam,
 }: Props) => {
@@ -46,6 +50,13 @@ export const Menu = ({
       onChangeAiKey(event.target.value);
     },
     [onChangeAiKey]
+  );
+
+  const handleAiEndpointChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeAiEndpoint(event.target.value);
+    },
+    [onChangeAiEndpoint]
   );
 
   const handleChangeKoeiroParam = useCallback(
@@ -115,11 +126,13 @@ export const Menu = ({
       {showSettings && (
         <Settings
           openAiKey={openAiKey}
+          openAiEndpoint={openAiEndpoint}
           chatLog={chatLog}
           systemPrompt={systemPrompt}
           koeiroParam={koeiroParam}
           onClickClose={() => setShowSettings(false)}
           onChangeAiKey={handleAiKeyChange}
+          onChangeAiEndpoint={handleAiEndpointChange}
           onChangeSystemPrompt={handleChangeSystemPrompt}
           onChangeChatLog={onChangeChatLog}
           onChangeKoeiroParam={handleChangeKoeiroParam}

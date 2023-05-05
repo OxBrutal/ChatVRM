@@ -13,11 +13,13 @@ import { Link } from "./link";
 
 type Props = {
   openAiKey: string;
+  openAiEndpoint: string;
   systemPrompt: string;
   chatLog: Message[];
   koeiroParam: KoeiroParam;
   onClickClose: () => void;
   onChangeAiKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeAiEndpoint: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeSystemPrompt: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onChangeChatLog: (index: number, text: string) => void;
   onChangeKoeiroParam: (x: number, y: number) => void;
@@ -25,12 +27,14 @@ type Props = {
 };
 export const Settings = ({
   openAiKey,
+  openAiEndpoint,
   chatLog,
   systemPrompt,
   koeiroParam,
   onClickClose,
   onChangeSystemPrompt,
   onChangeAiKey,
+  onChangeAiEndpoint,
   onChangeChatLog,
   onChangeKoeiroParam,
   onClickOpenVrmFile,
@@ -48,26 +52,45 @@ export const Settings = ({
         <div className="text-text1 max-w-3xl mx-auto px-24 py-64 ">
           <div className="my-24 typography-32 font-bold">Settings</div>
           <div className="my-24">
-            <div className="my-16 typography-20 font-bold">OpenAI API Key</div>
-            <input
-              className="text-ellipsis px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
-              type="text"
-              placeholder="sk-..."
-              value={openAiKey}
-              onChange={onChangeAiKey}
-            />
-            <div>
+            <div className="my-8 font-bold typography-20">OpenAI API</div>
+
+            <div className="flex items-center gap-4">
+              <label className="w-[20%]">API Key</label>
+
+              <input
+                type="text"
+                placeholder="sk-..."
+                value={openAiKey}
+                onChange={onChangeAiKey}
+                className="my-4 px-16 py-8 grow h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+              ></input>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <label className="w-[20%]">API Endpoint</label>
+
+              <input
+                type="text"
+                placeholder="OpenAI Endpoint"
+                value={openAiEndpoint}
+                onChange={onChangeAiEndpoint}
+                className="my-4 px-16 py-8 grow h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+              ></input>
+            </div>
+
+            <div className="my-24">
               API keys can be obtained from{" "}
               <Link
                 url="https://platform.openai.com/account/api-keys"
                 label="the OpenAI site"
-              />{" "}
-              Enter the obtained API key in the form.
+              />
+              . Enter the obtained API key in the form.
             </div>
             <div className="my-16">
               The entered API key will be used directly from the browser to use
               the OpenAI API, so it will not be saved on the server, etc. The
               model used is GPT-3.
+              <br />
               <br />
               *Your API key and conversation text will not be sent to
               pixiv&apos;s server.

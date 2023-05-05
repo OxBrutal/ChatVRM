@@ -4,8 +4,15 @@ import { Link } from "./link";
 type Props = {
   openAiKey: string;
   onChangeAiKey: (openAiKey: string) => void;
+  openEndpointKey: string;
+  onChangeAiEndpoint: (openAiEndpoint: string) => void;
 };
-export const Introduction = ({ openAiKey, onChangeAiKey }: Props) => {
+export const Introduction = ({
+  openAiKey,
+  onChangeAiKey,
+  onChangeAiEndpoint,
+  openEndpointKey,
+}: Props) => {
   const [opened, setOpened] = useState(true);
 
   const handleAiKeyChange = useCallback(
@@ -13,6 +20,13 @@ export const Introduction = ({ openAiKey, onChangeAiKey }: Props) => {
       onChangeAiKey(event.target.value);
     },
     [onChangeAiKey]
+  );
+
+  const handleAiEndpointChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeAiEndpoint(event.target.value);
+    },
+    [onChangeAiEndpoint]
   );
 
   return opened ? (
@@ -80,16 +94,34 @@ export const Introduction = ({ openAiKey, onChangeAiKey }: Props) => {
         </div>
         <div className="my-24">
           <div className="my-8 font-bold typography-20 text-secondary">
-            OpenAI API Key
+            OpenAI API
           </div>
-          <input
-            type="text"
-            placeholder="sk-..."
-            value={openAiKey}
-            onChange={handleAiKeyChange}
-            className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
-          ></input>
-          <div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-[20%]">API Key</label>
+
+            <input
+              type="text"
+              placeholder="sk-..."
+              value={openAiKey}
+              onChange={handleAiKeyChange}
+              className="my-4 px-16 py-8 grow h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+            ></input>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="w-[20%]">API Endpoint</label>
+
+            <input
+              type="text"
+              placeholder="OpenAI Endpoint"
+              value={openEndpointKey}
+              onChange={handleAiEndpointChange}
+              className="my-4 px-16 py-8 grow h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
+            ></input>
+          </div>
+
+          <div className="my-24">
             API keys can be obtained from{" "}
             <Link
               url="https://platform.openai.com/account/api-keys"
