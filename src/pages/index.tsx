@@ -8,10 +8,14 @@ import { getChatResponseStream } from "@/features/chat/openAiChat";
 import { DEFAULT_PARAM, KoeiroParam } from "@/features/constants/koeiroParam";
 import { OPENAI_ENDPOINT } from "@/features/constants/openai";
 import { SYSTEM_PROMPT } from "@/features/constants/systemPromptConstants";
-import { Message } from "@/features/messages/messages";
+import { EmotionType, Message } from "@/features/messages/messages";
+import {
+  EmotionSentence,
+  speakCharacter,
+} from "@/features/messages/speakCharacter";
 import { ViewerContext } from "@/features/vrmViewer/viewerContext";
 import { M_PLUS_2, Montserrat } from "next/font/google";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 const m_plus_2 = M_PLUS_2({
   variable: "--font-m-plus-2",
@@ -25,6 +29,8 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function Home() {
   const { viewer } = useContext(ViewerContext);
 
@@ -36,6 +42,9 @@ export default function Home() {
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [assistantMessage, setAssistantMessage] = useState("");
   const [showIntroduction, setShowIntroduction] = useState(false);
+
+  const speakQueue = useRef<EmotionSentence[]>([]);
+  const isSpeaking = useRef(false);
 
   const handleChangePrompt = (prompt: string) => {
     setSystemPrompt(prompt);
@@ -91,21 +100,40 @@ export default function Home() {
     [chatLog]
   );
 
-  /**
-   * Requesting and playing back audio in sequence for each text segment.
-   */
-  // const handleSpeakAi = useCallback(
-  //   async (
-  //     screenplay: Screenplay,
-  //     onStart?: () => void,
-  //     onEnd?: () => void
-  //   ) => {
-  //     onStart?.();
+  const handleAISpeak = useCallback(
+    async (
+      sentence: EmotionSentence,
+      onStart?: () => void,
+      onComplete?: () => void
+    ) => {
+      const speak = async () => {
+        const sentence = speakQueue.current[0];
 
-  //     speakCharacter(screenplay, viewer, onStart, onEnd);
-  //   },
-  //   []
-  // );
+        console.log(`Speaking "${sentence.sentence} with ${sentence.emotion}"`);
+
+        isSpeaking.current = true;
+
+        speakCharacter(sentence, viewer, onStart, () => {
+          isSpeaking.current = false;
+
+          speakQueue.current = speakQueue.current.slice(1);
+
+          if (speakQueue.current.length > 0) {
+            speak();
+          }
+
+          onComplete?.();
+        });
+      };
+
+      speakQueue.current.push(sentence);
+
+      if (speakQueue.current.length > 0 && !isSpeaking.current) {
+        speak();
+      }
+    },
+    [viewer]
+  );
 
   /**
    * Engaging in conversation with the assistant.
@@ -148,13 +176,15 @@ export default function Home() {
         return null;
       });
 
-      if (stream == null) {
+      if (!stream) {
         setChatProcessing(false);
         return;
       }
 
       const reader = stream.getReader();
       let receivedMessage = "";
+      let currentSentence = "";
+
       try {
         while (true) {
           const { done, value } = await reader.read();
@@ -162,11 +192,17 @@ export default function Home() {
           if (done) break;
 
           receivedMessage += value;
+          currentSentence += value;
 
-          const sentences = breakIntoSentences(receivedMessage);
-          const emotionSentences = sentencesToEmotionSentences(sentences);
+          const sentences = breakIntoSentences(currentSentence);
 
-          console.log(emotionSentences);
+          if (sentences[0]) {
+            const emotionSentence = sentenceToEmotionSentence(sentences[0]);
+
+            currentSentence = "";
+
+            handleAISpeak(emotionSentence);
+          }
 
           setAssistantMessage(receivedMessage);
         }
@@ -183,10 +219,19 @@ export default function Home() {
         { role: "assistant", content: receivedMessage },
       ];
 
+      viewer.model?.emoteController?.playEmotion("neutral");
+
       setChatLog(messageLogAssistant);
       setChatProcessing(false);
     },
-    [openAiEndpoint, openAiKey, chatLog, systemPrompt]
+    [
+      openAiEndpoint,
+      openAiKey,
+      chatLog,
+      systemPrompt,
+      viewer.model?.emoteController,
+      handleAISpeak,
+    ]
   );
 
   return (
@@ -225,26 +270,22 @@ export default function Home() {
   );
 }
 
-function sentencesToEmotionSentences(sentences: string[]) {
-  const emotionSentences: { sentence: string; emotion: string }[] = [];
-  let currentEmotion = "neutral";
+function sentenceToEmotionSentence(sentence: string): EmotionSentence {
+  let currentEmotion = undefined;
 
-  for (const sentence of sentences) {
-    // remove the [] from the sentence
-    // 返答内容のタグ部分の検出
-    const tagMatch = sentence.match(/^\[(.*?)\]/);
+  // remove the [] from the sentence
+  const tagMatch = sentence.match(/^\[(.*?)\]/);
 
-    if (tagMatch?.[1]) {
-      currentEmotion = tagMatch[1];
-    }
-
-    emotionSentences.push({
-      emotion: tagMatch?.[1] || currentEmotion,
-      sentence: sentence.slice(tagMatch?.[0].length || 0).trim(),
-    });
+  if (tagMatch?.[1]) {
+    currentEmotion = tagMatch[1] as EmotionType;
   }
 
-  return emotionSentences;
+  const currentSentence = sentence.slice(tagMatch?.[0].length || 0).trim();
+
+  return {
+    emotion: currentEmotion,
+    sentence: currentSentence,
+  };
 }
 
 function breakIntoSentences(str: string) {

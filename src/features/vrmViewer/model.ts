@@ -1,11 +1,11 @@
-import * as THREE from "three";
+import { VRMLookAtSmootherLoaderPlugin } from "@/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin";
 import { VRM, VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
+import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { VRMAnimation } from "../../lib/VRMAnimation/VRMAnimation";
-import { VRMLookAtSmootherLoaderPlugin } from "@/lib/VRMLookAtSmootherLoaderPlugin/VRMLookAtSmootherLoaderPlugin";
-import { LipSync } from "../lipSync/lipSync";
 import { EmoteController } from "../emoteController/emoteController";
-import { Screenplay } from "../messages/messages";
+import { LipSync } from "../lipSync/lipSync";
+import { EmotionType } from "../messages/messages";
 
 /**
  * 3Dキャラクターを管理するクラス
@@ -69,13 +69,15 @@ export class Model {
   /**
    * 音声を再生し、リップシンクを行う
    */
-  public async speak(buffer: ArrayBuffer, screenplay: Screenplay) {
-    this.emoteController?.playEmotion(screenplay.expression);
-    await new Promise((resolve) => {
-      this._lipSync?.playFromArrayBuffer(buffer, () => {
-        resolve(true);
-      });
-    });
+  public async speak(buffer: ArrayBuffer | null, emotion?: EmotionType) {
+    if (emotion) {
+      this.emoteController?.playEmotion(emotion);
+    }
+    // await new Promise((resolve) => {
+    //   this._lipSync?.playFromArrayBuffer(buffer, () => {
+    //     resolve(true);
+    //   });
+    // });
   }
 
   public update(delta: number): void {

@@ -1,8 +1,12 @@
 import { wait } from "@/utils/wait";
 import { synthesizeVoice } from "../koeiromap/koeiromap";
 import { Viewer } from "../vrmViewer/viewer";
-import { Screenplay } from "./messages";
-import { Talk } from "./messages";
+import { EmotionType, Talk } from "./messages";
+
+export interface EmotionSentence {
+  emotion?: EmotionType;
+  sentence: string;
+}
 
 const createSpeakCharacter = () => {
   let lastTime = 0;
@@ -10,7 +14,7 @@ const createSpeakCharacter = () => {
   let prevSpeakPromise: Promise<unknown> = Promise.resolve();
 
   return (
-    screenplay: Screenplay,
+    emotionSentence: EmotionSentence,
     viewer: Viewer,
     onStart?: () => void,
     onComplete?: () => void
@@ -21,24 +25,30 @@ const createSpeakCharacter = () => {
         await wait(1000 - (now - lastTime));
       }
 
-      const buffer = await fetchAudio(screenplay.talk).catch(() => null);
+      // const buffer = await fetchAudio(screenplay.talk).catch(() => null);
+
+      // !TODO: Get buffer from Elevenlabs
+      const buffer = null;
+
       lastTime = Date.now();
       return buffer;
     });
 
     prevFetchPromise = fetchPromise;
-    prevSpeakPromise = Promise.all([fetchPromise, prevSpeakPromise]).then(([audioBuffer]) => {
-      onStart?.();
-      if (!audioBuffer) {
-        return;
+    prevSpeakPromise = Promise.all([fetchPromise, prevSpeakPromise]).then(
+      ([audioBuffer]) => {
+        onStart?.();
+        // if (!audioBuffer) {
+        //   return;
+        // }
+        return viewer.model?.speak(audioBuffer, emotionSentence.emotion);
       }
-      return viewer.model?.speak(audioBuffer, screenplay);
-    });
+    );
     prevSpeakPromise.then(() => {
       onComplete?.();
     });
   };
-}
+};
 
 export const speakCharacter = createSpeakCharacter();
 
