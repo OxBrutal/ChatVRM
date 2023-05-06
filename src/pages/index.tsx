@@ -11,7 +11,7 @@ import { SYSTEM_PROMPT } from "@/features/constants/systemPromptConstants";
 import { Message } from "@/features/messages/messages";
 import { ViewerContext } from "@/features/vrmViewer/viewerContext";
 import { M_PLUS_2, Montserrat } from "next/font/google";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 const m_plus_2 = M_PLUS_2({
   variable: "--font-m-plus-2",
@@ -35,6 +35,50 @@ export default function Home() {
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [assistantMessage, setAssistantMessage] = useState("");
+  const [showIntroduction, setShowIntroduction] = useState(false);
+
+  const handleChangePrompt = (prompt: string) => {
+    setSystemPrompt(prompt);
+
+    localStorage.setItem("chatvrm_prompt", prompt);
+  };
+  const handleChangeOpenAIKey = (key: string) => {
+    setOpenAiKey(key);
+
+    localStorage.setItem("chatvrm_openai_key", key);
+  };
+  const handleChangeOpenAIEndpoint = (endpoint: string) => {
+    setOpenAiEndpoint(endpoint);
+
+    localStorage.setItem("chatvrm_openai_endpoint", endpoint);
+  };
+
+  useEffect(() => {
+    const savedPrompt = localStorage.getItem("chatvrm_prompt");
+    const savedOpenAIKey = localStorage.getItem("chatvrm_openai_key");
+    const savedOpenAIEndpoint = localStorage.getItem("chatvrm_openai_endpoint");
+    const shouldShowIntroduction = localStorage.getItem(
+      "chatvrm_show_introduction"
+    );
+
+    if (savedPrompt) {
+      setSystemPrompt(savedPrompt);
+    }
+
+    if (savedOpenAIKey) {
+      setOpenAiKey(savedOpenAIKey);
+    }
+
+    if (savedOpenAIEndpoint) {
+      setOpenAiEndpoint(savedOpenAIEndpoint);
+    }
+
+    if (!shouldShowIntroduction) {
+      setShowIntroduction(true);
+
+      localStorage.setItem("chatvrm_show_introduction", "true");
+    }
+  }, []);
 
   const handleChangeChatLog = useCallback(
     (targetIndex: number, text: string) => {
@@ -148,12 +192,16 @@ export default function Home() {
   return (
     <div className={`${m_plus_2.variable} ${montserrat.variable}`}>
       <Meta />
-      <Introduction
-        openAiKey={openAiKey}
-        onChangeAiKey={setOpenAiKey}
-        onChangeAiEndpoint={setOpenAiEndpoint}
-        openEndpointKey={openAiEndpoint}
-      />
+
+      {showIntroduction && (
+        <Introduction
+          openAiKey={openAiKey}
+          onChangeAiKey={handleChangeOpenAIKey}
+          onChangeAiEndpoint={handleChangeOpenAIEndpoint}
+          openAiEndpoint={openAiEndpoint}
+        />
+      )}
+
       <VrmViewer />
       <MessageInputContainer
         isChatProcessing={chatProcessing}
@@ -162,13 +210,13 @@ export default function Home() {
       <Menu
         openAiKey={openAiKey}
         openAiEndpoint={openAiEndpoint}
-        onChangeAiEndpoint={setOpenAiEndpoint}
+        onChangeAiEndpoint={handleChangeOpenAIEndpoint}
         systemPrompt={systemPrompt}
         chatLog={chatLog}
         koeiroParam={koeiroParam}
         assistantMessage={assistantMessage}
-        onChangeAiKey={setOpenAiKey}
-        onChangeSystemPrompt={setSystemPrompt}
+        onChangeAiKey={handleChangeOpenAIKey}
+        onChangeSystemPrompt={handleChangePrompt}
         onChangeChatLog={handleChangeChatLog}
         onChangeKoeiromapParam={setKoeiroParam}
       />

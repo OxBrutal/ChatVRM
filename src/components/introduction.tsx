@@ -4,14 +4,14 @@ import { Link } from "./link";
 type Props = {
   openAiKey: string;
   onChangeAiKey: (openAiKey: string) => void;
-  openEndpointKey: string;
+  openAiEndpoint: string;
   onChangeAiEndpoint: (openAiEndpoint: string) => void;
 };
 export const Introduction = ({
   openAiKey,
   onChangeAiKey,
   onChangeAiEndpoint,
-  openEndpointKey,
+  openAiEndpoint,
 }: Props) => {
   const [opened, setOpened] = useState(true);
 
@@ -115,7 +115,7 @@ export const Introduction = ({
             <input
               type="text"
               placeholder="OpenAI Endpoint"
-              value={openEndpointKey}
+              value={openAiEndpoint}
               onChange={handleAiEndpointChange}
               className="my-4 px-16 py-8 grow h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
             ></input>
