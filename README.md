@@ -1,65 +1,68 @@
 # ChatVRM
 
-ChatVRMはブラウザで簡単に3Dキャラクターと会話ができるデモアプリケーションです。
+ChatVRM is a demo application that allows you to easily have a conversation with a 3D character in your browser.
 
-VRMファイルをインポートしてキャラクターに合わせた声の調整や、感情表現を含んだ返答文の生成などを行うことができます。
+By importing a VRM file, you can adjust the voice to match the character and generate response sentences that include emotional expressions.
 
-ChatVRMの各機能は主に以下の技術を使用しています。
+Each function of ChatVRM mainly uses the following technologies
 
-- ユーザーの音声の認識
-    - [Web Speech API(SpeechRecognition)](https://developer.mozilla.org/ja/docs/Web/API/SpeechRecognition)
-- 返答文の生成
-    - [ChatGPT API](https://platform.openai.com/docs/api-reference/chat)
-- 読み上げ音声の生成
-    - [Koeiro API](http://koeiromap.rinna.jp/)
-- 3Dキャラクターの表示
-    - [@pixiv/three-vrm](https://github.com/pixiv/three-vrm)
+- Recognition of user speech
+  - [Web Speech API (SpeechRecognition)](https://developer.mozilla.org/ja/docs/Web/API/SpeechRecognition)
+- Generate reply text
+  - [ChatGPT API](https://platform.openai.com/docs/api-reference/chat)
+- Speech generation
+  - [ElevenLabs API](https://beta.elevenlabs.io/)
+- Displaying 3D characters
+  - [@pixiv/three-vrm](https://github.com/pixiv/three-vrm)
 
+![home.png](./images/home.png)
+![settings-1.png](./images/settings-1.png)
+![settings-2.png](./images/settings-2.png)
+![settings-3.png](./images/settings-3.png)
 
-## デモ
-
-GitHub Pagesでデモを公開しています。
+## Demo
 
 [https://pixiv.github.io/ChatVRM](https://pixiv.github.io/ChatVRM)
 
+## Installation
 
-## 実行
-ローカル環境で実行する場合はこのリポジトリをクローンするか、ダウンロードしてください。
+To run this project locally, clone or download the repository.
 
 ```bash
-git clone git@github.com:pixiv/ChatVRM.git
+git clone https://github.com/hoangvu12/ChatVRM
 ```
 
-必要なパッケージをインストールしてください。
+Install the required dependencies.
+
 ```bash
 npm install
 ```
 
-パッケージのインストールが完了した後、以下のコマンドで開発用のWebサーバーを起動します。
+After installing the dependencies, start the development enviroment using the following command.
+
 ```bash
 npm run dev
 ```
 
-実行後、以下のURLにアクセスして動作を確認して下さい。
+Once started, please visit the following URL to confirm that it is working properly.
 
-[http://localhost:3000](http://localhost:3000) 
-
+[http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## ChatGPT API
 
-ChatVRMでは返答文の生成にChatGPT APIを使用しています。
+ChatVRM uses the ChatGPT API to generate response messages.
 
-ChatGPT APIの仕様や利用規約については以下のリンクや公式サイトをご確認ください。
+Please refer to the following links and official website to obtain the specifications and terms of use for the ChatGPT API.
 
 - [https://platform.openai.com/docs/api-reference/chat](https://platform.openai.com/docs/api-reference/chat)
 - [https://openai.com/policies/api-data-usage-policies](https://openai.com/policies/api-data-usage-policies)
 
+## ElevenLabs API
 
-## Koeiro API
-ChatVRMでは返答文の音声読み上げにKoeiro APIを使用しています。
+ChatVRM uses the ElevenLabs API for speech generations of response messages.
 
-Koeiro APIの仕様や利用規約については以下のリンクや公式サイトをご確認ください。
+Please refer to the following links and official website to obtain the specifications and terms of use for the ElevenLabs API.
 
-- [http://koeiromap.rinna.jp/](http://koeiromap.rinna.jp/)
+- [https://docs.elevenlabs.io/](https://docs.elevenlabs.io/)
