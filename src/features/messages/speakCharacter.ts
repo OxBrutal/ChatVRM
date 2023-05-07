@@ -1,7 +1,6 @@
 import { wait } from "@/utils/wait";
-import { synthesizeVoice } from "../koeiromap/koeiromap";
 import { Viewer } from "../vrmViewer/viewer";
-import { EmotionType, Talk } from "./messages";
+import { EmotionType } from "./messages";
 
 export interface EmotionSentence {
   emotion?: EmotionType;
@@ -13,22 +12,26 @@ const createSpeakCharacter = () => {
   let prevFetchPromise: Promise<unknown> = Promise.resolve();
   let prevSpeakPromise: Promise<unknown> = Promise.resolve();
 
-  return (
-    emotionSentence: EmotionSentence,
-    viewer: Viewer,
-    onStart?: () => void,
-    onComplete?: () => void
-  ) => {
+  return ({
+    emotionSentence,
+    viewer,
+    onStart,
+    onComplete,
+    fetchAudio,
+  }: {
+    emotionSentence: EmotionSentence;
+    viewer: Viewer;
+    onStart?: () => void;
+    onComplete?: () => void;
+    fetchAudio: (sentence: EmotionSentence) => Promise<ArrayBuffer>;
+  }) => {
     const fetchPromise = prevFetchPromise.then(async () => {
       const now = Date.now();
       if (now - lastTime < 1000) {
         await wait(1000 - (now - lastTime));
       }
 
-      // const buffer = await fetchAudio(screenplay.talk).catch(() => null);
-
-      // !TODO: Get buffer from Elevenlabs
-      const buffer = null;
+      const buffer = await fetchAudio(emotionSentence).catch(() => null);
 
       lastTime = Date.now();
       return buffer;
@@ -38,9 +41,9 @@ const createSpeakCharacter = () => {
     prevSpeakPromise = Promise.all([fetchPromise, prevSpeakPromise]).then(
       ([audioBuffer]) => {
         onStart?.();
-        // if (!audioBuffer) {
-        //   return;
-        // }
+        if (!audioBuffer) {
+          return;
+        }
         return viewer.model?.speak(audioBuffer, emotionSentence.emotion);
       }
     );
@@ -51,21 +54,3 @@ const createSpeakCharacter = () => {
 };
 
 export const speakCharacter = createSpeakCharacter();
-
-export const fetchAudio = async (talk: Talk): Promise<ArrayBuffer> => {
-  const ttsVoice = await synthesizeVoice(
-    talk.message,
-    talk.speakerX,
-    talk.speakerY,
-    talk.style
-  );
-  const url = ttsVoice.audio;
-
-  if (url == null) {
-    throw new Error("Something went wrong");
-  }
-
-  const resAudio = await fetch(url);
-  const buffer = await resAudio.arrayBuffer();
-  return buffer;
-};

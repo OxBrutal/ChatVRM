@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Link } from "./link";
+import ElevenLabsSettings from "@/features/elevenlabs/elevenLabsSettings";
 
 type Props = {
   openAiKey: string;
@@ -61,12 +62,11 @@ export const Introduction = ({
               label={"ChatGPT API"}
             />{" "}
             for speech generation, and{" "}
-            <Link url={"http://koeiromap.rinna.jp/"} label={"Koeiro API"} /> for
-            speech synthesis. See this{" "}
             <Link
-              url={"https://inside.pixiv.blog/2023/04/28/160000"}
-              label={"technical article for details"}
-            />
+              url={"https://beta.elevenlabs.io/"}
+              label={"ElevenLabs API"}
+            />{" "}
+            for speech synthesis.
           </div>
           <div className="my-16">
             The source code for this demo is available on GitHub. Feel free to
@@ -139,6 +139,15 @@ export const Introduction = ({
             server.
           </div>
         </div>
+
+        <div className="my-24">
+          <div className="my-8 font-bold typography-20 text-secondary">
+            ElevenLabs API
+          </div>
+
+          <ElevenLabsSettings />
+        </div>
+
         <div className="my-24">
           <button
             onClick={() => {
@@ -146,7 +155,7 @@ export const Introduction = ({
             }}
             className="font-bold bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled text-white px-24 py-8 rounded-oval"
           >
-            Enter your API key to get started
+            Get started
           </button>
         </div>
       </div>

@@ -69,15 +69,15 @@ export class Model {
   /**
    * 音声を再生し、リップシンクを行う
    */
-  public async speak(buffer: ArrayBuffer | null, emotion?: EmotionType) {
+  public async speak(buffer: ArrayBuffer, emotion?: EmotionType) {
     if (emotion) {
       this.emoteController?.playEmotion(emotion);
     }
-    // await new Promise((resolve) => {
-    //   this._lipSync?.playFromArrayBuffer(buffer, () => {
-    //     resolve(true);
-    //   });
-    // });
+    await new Promise((resolve) => {
+      this._lipSync?.playFromArrayBuffer(buffer, () => {
+        resolve(true);
+      });
+    });
   }
 
   public update(delta: number): void {

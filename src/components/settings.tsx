@@ -1,14 +1,9 @@
+import { Message } from "@/features/messages/messages";
 import React from "react";
 import { IconButton } from "./iconButton";
 import { TextButton } from "./textButton";
-import { Message } from "@/features/messages/messages";
-import {
-  KoeiroParam,
-  PRESET_A,
-  PRESET_B,
-  PRESET_C,
-  PRESET_D,
-} from "@/features/constants/koeiroParam";
+
+import ElevenLabsSettings from "@/features/elevenlabs/elevenLabsSettings";
 import { Link } from "./link";
 
 type Props = {
@@ -16,13 +11,11 @@ type Props = {
   openAiEndpoint: string;
   systemPrompt: string;
   chatLog: Message[];
-  koeiroParam: KoeiroParam;
   onClickClose: () => void;
   onChangeAiKey: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeAiEndpoint: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeSystemPrompt: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onChangeChatLog: (index: number, text: string) => void;
-  onChangeKoeiroParam: (x: number, y: number) => void;
   onClickOpenVrmFile: () => void;
 };
 export const Settings = ({
@@ -30,13 +23,11 @@ export const Settings = ({
   openAiEndpoint,
   chatLog,
   systemPrompt,
-  koeiroParam,
   onClickClose,
   onChangeSystemPrompt,
   onChangeAiKey,
   onChangeAiEndpoint,
   onChangeChatLog,
-  onChangeKoeiroParam,
   onClickOpenVrmFile,
 }: Props) => {
   return (
@@ -117,83 +108,10 @@ export const Settings = ({
           </div>
           <div className="my-40">
             <div className="my-16 typography-20 font-bold">
-              Voice adjustment.
+              Voice adjustment (ElevenLabs)
             </div>
-            <div>
-              I am using Koeiro API. Please see{" "}
-              <a
-                className="text-primary hover:text-primary-hover"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="http://koeiromap.rinna.jp"
-              >
-                http://koeiromap.rinna.jp
-              </a>{" "}
-              for details.
-            </div>
-            <div className="mt-16">Presets</div>
-            <div className="my-8 grid grid-cols-2 gap-[8px]">
-              <TextButton
-                onClick={() =>
-                  onChangeKoeiroParam(PRESET_A.speakerX, PRESET_A.speakerY)
-                }
-              >
-                Cute
-              </TextButton>
-              <TextButton
-                onClick={() =>
-                  onChangeKoeiroParam(PRESET_B.speakerX, PRESET_B.speakerY)
-                }
-              >
-                Lively
-              </TextButton>
-              <TextButton
-                onClick={() =>
-                  onChangeKoeiroParam(PRESET_C.speakerX, PRESET_C.speakerY)
-                }
-              >
-                Cool
-              </TextButton>
-              <TextButton
-                onClick={() =>
-                  onChangeKoeiroParam(PRESET_D.speakerX, PRESET_D.speakerY)
-                }
-              >
-                Lame
-              </TextButton>
-            </div>
-            <div className="my-24">
-              <div className="select-none">x : {koeiroParam.speakerX}</div>
-              <input
-                type="range"
-                min={-3}
-                max={3}
-                step={0.001}
-                value={koeiroParam.speakerX}
-                className="mt-8 mb-16 input-range"
-                onChange={(e) => {
-                  onChangeKoeiroParam(
-                    Number(e.target.value),
-                    koeiroParam.speakerY
-                  );
-                }}
-              ></input>
-              <div className="select-none">y : {koeiroParam.speakerY}</div>
-              <input
-                type="range"
-                min={-3}
-                max={3}
-                step={0.001}
-                value={koeiroParam.speakerY}
-                className="mt-8 mb-16 input-range"
-                onChange={(e) => {
-                  onChangeKoeiroParam(
-                    koeiroParam.speakerX,
-                    Number(e.target.value)
-                  );
-                }}
-              ></input>
-            </div>
+
+            <ElevenLabsSettings />
           </div>
           {chatLog.length > 0 && (
             <div className="my-40">

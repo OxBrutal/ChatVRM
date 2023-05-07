@@ -5,9 +5,9 @@ import { MessageInputContainer } from "@/components/messageInputContainer";
 import { Meta } from "@/components/meta";
 import VrmViewer from "@/components/vrmViewer";
 import { getChatResponseStream } from "@/features/chat/openAiChat";
-import { DEFAULT_PARAM, KoeiroParam } from "@/features/constants/koeiroParam";
 import { OPENAI_ENDPOINT } from "@/features/constants/openai";
 import { SYSTEM_PROMPT } from "@/features/constants/systemPromptConstants";
+import { useElevenLabs } from "@/features/elevenlabs/elevenLabsContext";
 import { EmotionType, Message } from "@/features/messages/messages";
 import {
   EmotionSentence,
@@ -29,21 +29,19 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export default function Home() {
   const { viewer } = useContext(ViewerContext);
+
+  const { apiKey: elevenLabsKey, voices, currentVoiceId } = useElevenLabs();
 
   const [systemPrompt, setSystemPrompt] = useState(SYSTEM_PROMPT);
   const [openAiKey, setOpenAiKey] = useState("");
   const [openAiEndpoint, setOpenAiEndpoint] = useState(OPENAI_ENDPOINT);
-  const [koeiroParam, setKoeiroParam] = useState<KoeiroParam>(DEFAULT_PARAM);
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [assistantMessage, setAssistantMessage] = useState("");
   const [showIntroduction, setShowIntroduction] = useState(false);
 
-  const speakQueue = useRef<EmotionSentence[]>([]);
   const isSpeaking = useRef(false);
 
   const handleChangePrompt = (prompt: string) => {
@@ -106,33 +104,40 @@ export default function Home() {
       onStart?: () => void,
       onComplete?: () => void
     ) => {
-      const speak = async () => {
-        const sentence = speakQueue.current[0];
+      isSpeaking.current = true;
 
-        console.log(`Speaking "${sentence.sentence} with ${sentence.emotion}"`);
-
-        isSpeaking.current = true;
-
-        speakCharacter(sentence, viewer, onStart, () => {
+      speakCharacter({
+        emotionSentence: sentence,
+        viewer,
+        onStart,
+        onComplete: () => {
           isSpeaking.current = false;
 
-          speakQueue.current = speakQueue.current.slice(1);
-
-          if (speakQueue.current.length > 0) {
-            speak();
-          }
-
           onComplete?.();
-        });
-      };
+        },
+        fetchAudio: async (sentence) => {
+          const response = await fetch(
+            `https://api.elevenlabs.io/v1/text-to-speech/${currentVoiceId}/stream`,
+            {
+              headers: {
+                "xi-api-key": elevenLabsKey,
+                "content-type": "application/json",
+              },
+              method: "POST",
+              body: JSON.stringify({
+                text: sentence.sentence,
+                model_id: "eleven_monolingual_v1",
+              }),
+            }
+          );
 
-      speakQueue.current.push(sentence);
+          const buffer = await response.arrayBuffer();
 
-      if (speakQueue.current.length > 0 && !isSpeaking.current) {
-        speak();
-      }
+          return buffer;
+        },
+      });
     },
-    [viewer]
+    [currentVoiceId, elevenLabsKey, viewer]
   );
 
   /**
@@ -142,7 +147,19 @@ export default function Home() {
     async (text: string) => {
       // If using official OpenAI endpoint and no API key is entered, prompt the user.
       if (openAiEndpoint === OPENAI_ENDPOINT && !openAiKey) {
-        setAssistantMessage("API key is not entered");
+        setAssistantMessage("OpenAI API Key is not entered");
+        return;
+      }
+
+      if (!elevenLabsKey) {
+        setAssistantMessage("ElevenLabs API Key is not entered");
+        return;
+      }
+
+      if (!voices?.length) {
+        setAssistantMessage(
+          "No voices detected, please check your ElevenLabs settings (in Menu)"
+        );
         return;
       }
 
@@ -227,6 +244,8 @@ export default function Home() {
     [
       openAiEndpoint,
       openAiKey,
+      elevenLabsKey,
+      voices?.length,
       chatLog,
       systemPrompt,
       viewer.model?.emoteController,
@@ -258,12 +277,10 @@ export default function Home() {
         onChangeAiEndpoint={handleChangeOpenAIEndpoint}
         systemPrompt={systemPrompt}
         chatLog={chatLog}
-        koeiroParam={koeiroParam}
         assistantMessage={assistantMessage}
         onChangeAiKey={handleChangeOpenAIKey}
         onChangeSystemPrompt={handleChangePrompt}
         onChangeChatLog={handleChangeChatLog}
-        onChangeKoeiromapParam={setKoeiroParam}
       />
       <GitHubLink />
     </div>
