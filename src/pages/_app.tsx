@@ -6,7 +6,7 @@ import ElevenLabsContextProvider from "@/features/elevenlabs/elevenLabsContext";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ElevenLabsContextProvider>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </ElevenLabsContextProvider>
   );
 }

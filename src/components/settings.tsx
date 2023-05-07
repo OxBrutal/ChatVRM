@@ -5,6 +5,7 @@ import { TextButton } from "./textButton";
 
 import ElevenLabsSettings from "@/features/elevenlabs/elevenLabsSettings";
 import { Link } from "./link";
+import VrmPresets from "@/features/vrmViewer/vrmPresets";
 
 type Props = {
   openAiKey: string;
@@ -90,8 +91,12 @@ export const Settings = ({
           <div className="my-40">
             <div className="my-16 typography-20 font-bold">Character model</div>
             <div className="my-8">
+              <div className="mb-24">
+                <VrmPresets />
+              </div>
+
               <TextButton onClick={onClickOpenVrmFile}>
-                Open the VRM file.
+                Or open your own VRM model
               </TextButton>
             </div>
           </div>
