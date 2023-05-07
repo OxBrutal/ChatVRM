@@ -1,3 +1,4 @@
+import { KeyboardEventHandler, useCallback } from "react";
 import { IconButton } from "./iconButton";
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
   onChangeUserMessage: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  onClickSendButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickSendButton: () => void;
   onClickMicButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 export const MessageInput = ({
@@ -18,6 +19,16 @@ export const MessageInput = ({
   onClickMicButton,
   onClickSendButton,
 }: Props) => {
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onClickSendButton();
+      }
+    },
+    [onClickSendButton]
+  );
+
   return (
     <div className="absolute bottom-0 z-20 w-screen">
       <div className="bg-base text-black">
@@ -37,6 +48,7 @@ export const MessageInput = ({
               disabled={isChatProcessing}
               className="bg-surface1 hover:bg-surface1-hover focus:bg-surface1 disabled:bg-surface1-disabled disabled:text-primary-disabled rounded-16 w-full px-16 text-text-primary typography-16 font-M_PLUS_2 font-bold disabled"
               value={userMessage}
+              onKeyDown={handleKeyDown}
             ></input>
 
             <IconButton
