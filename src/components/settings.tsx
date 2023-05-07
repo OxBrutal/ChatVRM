@@ -118,9 +118,12 @@ export const Settings = ({
 
             <ElevenLabsSettings />
           </div>
+
           {chatLog.length > 0 && (
             <div className="my-40">
-              <div className="my-16 typography-20 font-bold">会話履歴</div>
+              <div className="my-16 typography-20 font-bold">
+                Conversation log
+              </div>
               <div className="my-8">
                 {chatLog.map((value, index) => {
                   return (
