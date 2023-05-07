@@ -5,6 +5,7 @@ import React, { useCallback, useContext, useRef, useState } from "react";
 import { Settings } from "./settings";
 import { ViewerContext } from "@/features/vrmViewer/viewerContext";
 import { AssistantText } from "./assistantText";
+import { set } from "idb-keyval";
 
 type Props = {
   openAiKey: string;
@@ -72,6 +73,8 @@ export const Menu = ({
         const blob = new Blob([file], { type: "application/octet-stream" });
         const url = window.URL.createObjectURL(blob);
         viewer.loadVrm(url);
+
+        set("vrmModel", file);
       }
 
       event.target.value = "";
