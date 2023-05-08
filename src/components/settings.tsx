@@ -138,7 +138,9 @@ export const Settings = ({
                         key={index}
                         className="bg-surface1 hover:bg-surface1-hover rounded-8 w-full px-16 py-8"
                         type="text"
-                        value={value.content}
+                        value={value.content
+                          .replace(/\[([a-zA-Z]*?)\]/g, "")
+                          .trim()}
                         onChange={(event) => {
                           onChangeChatLog(index, event.target.value);
                         }}
