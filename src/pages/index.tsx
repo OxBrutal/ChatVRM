@@ -307,7 +307,7 @@ function sentenceToEmotionSentence(sentence: string): EmotionSentence {
 
 function breakIntoSentences(str: string) {
   // Define a regular expression to match sentence endings.
-  const sentenceEndings = /([.?!])/g;
+  const sentenceEndings = /([.?])/g;
 
   // Split the string into an array of sentences.
   const sentences = str.split(sentenceEndings);
@@ -315,7 +315,7 @@ function breakIntoSentences(str: string) {
   // Combine each pair of adjacent elements into a sentence, including the sentence-ending punctuation.
   const formattedSentences: string[] = [];
 
-  const endingMarks = ["?", "!", "."];
+  const endingMarks = ["?", "."];
 
   for (let i = 0; i < sentences.filter(Boolean).length; i += 2) {
     const sentenceMark = sentences[i + 1];
