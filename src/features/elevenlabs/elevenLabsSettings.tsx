@@ -62,7 +62,7 @@ const ElevenLabsSettings = () => {
         <label className="w-[20%]">API Key</label>
 
         <input
-          type="text"
+          type="password"
           placeholder="ElevenLabs API Key (Required)"
           value={apiKey}
           onChange={handleElevenLabsKeyChange}

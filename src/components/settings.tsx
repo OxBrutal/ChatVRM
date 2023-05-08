@@ -50,8 +50,8 @@ export const Settings = ({
               <label className="w-[20%]">API Key</label>
 
               <input
-                type="text"
                 placeholder="sk-..."
+                type="password"
                 value={openAiKey}
                 onChange={onChangeAiKey}
                 className="my-4 px-16 py-8 grow h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
