@@ -31,7 +31,7 @@ interface FineTuning {
   slice_ids: any;
 }
 
-interface VoiceSettings {
+export interface VoiceSettings {
   stability: number;
   similarity: number;
 }

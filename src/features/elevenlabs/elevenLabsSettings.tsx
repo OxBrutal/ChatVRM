@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useElevenLabs } from "./elevenLabsContext";
+import { VoiceSettings, useElevenLabs } from "./elevenLabsContext";
 import { Link } from "@/components/link";
 
 const ElevenLabsSettings = () => {
@@ -14,6 +14,28 @@ const ElevenLabsSettings = () => {
     isLoadingSettings,
     currentVoiceId,
   } = useElevenLabs();
+
+  const updateSettings = useCallback(
+    async (fn: (settings: VoiceSettings) => VoiceSettings) => {
+      const data = fn(voiceSettings);
+
+      fetch(
+        `https://api.elevenlabs.io/v1/voices/${currentVoiceId}/settings/edit`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            similarity_boost: data.similarity,
+            stability: data.stability,
+          }),
+          headers: {
+            "xi-api-key": apiKey,
+            "content-type": "application/json",
+          },
+        }
+      );
+    },
+    [apiKey, currentVoiceId, voiceSettings]
+  );
 
   const handleElevenLabsKeyChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +124,12 @@ const ElevenLabsSettings = () => {
               };
             });
           }}
+          onBlur={(e) => {
+            updateSettings((prev) => ({
+              ...prev,
+              stability: Number(e.target.value),
+            }));
+          }}
           disabled={isLoadingSettings}
         ></input>
         <div className="select-none">
@@ -121,6 +149,12 @@ const ElevenLabsSettings = () => {
                 similarity: Number(e.target.value),
               };
             });
+          }}
+          onBlur={(e) => {
+            updateSettings((prev) => ({
+              ...prev,
+              similarity: Number(e.target.value),
+            }));
           }}
           disabled={isLoadingSettings}
         ></input>
